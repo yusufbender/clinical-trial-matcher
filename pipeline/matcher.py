@@ -1,8 +1,11 @@
 # ---------------- NORMALIZERS ----------------
 
-def normalize_stage(stage: str | None) -> str | None:
-    if not stage:
+def normalize_stage(stage) -> str | None:
+    if stage is None:
         return None
+
+    # int gelirse string'e çevir
+    stage = str(stage)
 
     s = stage.upper().replace("STAGE", "").strip()
 
@@ -10,11 +13,11 @@ def normalize_stage(stage: str | None) -> str | None:
         "I": "1", "IA": "1A", "IB": "1B",
         "II": "2", "IIA": "2A", "IIB": "2B",
         "III": "3", "IIIA": "3A", "IIIB": "3B",
-        "IV": "4"
+        "IV": "4",
+        "1": "1", "2": "2", "3": "3", "4": "4"
     }
 
     return mapping.get(s, s)
-
 
 # ---------------- RULE CHECKS ----------------
 
@@ -81,6 +84,8 @@ def check_prior_treatments(patient, rules):
     treatments = " ".join(patient.get("treatments", [])).lower()
 
     for ex in excluded:
+        if not isinstance(ex, str):
+            continue  # ← string değilse atla
         if ex.lower() in treatments:
             return False, f"Prior treatment excluded: {ex}"
 

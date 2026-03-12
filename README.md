@@ -84,19 +84,19 @@ curl -X POST http://localhost:8000/analyze-patient \
 
 ## Proje Yapısı
 ```
-config.py                         # tüm ayarlar tek yerde
-api.py                            # FastAPI endpoint
+config.py                            # tüm ayarlar tek yerde
+api.py                               # FastAPI endpoint
 pipeline/
-    utils.py                      # shared JSON parser
-    embed.py                      # hasta embedding
-    matcher.py                    # deterministic rule engine
-    semantic_rules_match.py       # CLI test aracı
+    utils.py                         # shared JSON parser
+    embed.py                         # hasta embedding
+    matcher.py                       # deterministic rule engine
+    semantic_rules_match.py          # CLI test aracı
 indexing/
-    llm_utils.py                  # LLM wrapper
-    parse_trials.py               # XML parser
-    index_trials_with_rules.py    # trial indexer + rule compiler
+    llm_utils.py                     # LLM wrapper
+    parse_trials.py                  # XML parser
+    index_trials_with_rules.py       # trial indexer + rule compiler
 data/
-    trials_xml/                   # ClinicalTrials.gov XML
+    trials_xml/                      # ClinicalTrials.gov XML
 ```
 
 ## Tasarım Kararları
@@ -110,20 +110,3 @@ Trial uygunluk kararını LLM'e bırakmak tutarsız ve halüsinasyonlu sonuçlar
 ## Veri Kaynağı
 
 [ClinicalTrials.gov](https://clinicaltrials.gov) — AllPublicXML (~84.000 trial)
-```
-
----
-
-Son durum:
-```
-config.py          ← YENİ
-requirements.txt   ← YENİ
-README.md          ← YENİ
-api.py             ← güncellendi
-pipeline/
-  utils.py         ← YENİ
-  embed.py         ← güncellendi
-  matcher.py       ← güncellendi
-indexing/
-  llm_utils.py     ← güncellendi
-  index_trials_with_rules.py ← güncellendi

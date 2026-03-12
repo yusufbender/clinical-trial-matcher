@@ -9,13 +9,7 @@ from pipeline.utils import extract_json
 from config import OLLAMA_GEN_URL, OLLAMA_EMB_URL, LLM_MODEL, EMB_MODEL, QDRANT_COLLECTION, QDRANT_HOST, QDRANT_PORT
 # ---------------- CONFIG ----------------
 
-OLLAMA_GEN = "http://localhost:11434/api/generate"
-OLLAMA_EMB = "http://localhost:11434/api/embeddings"
-
-LLM_MODEL = "llama3:8b"
-EMB_MODEL = "nomic-embed-text"
-
-qdrant = QdrantClient("localhost", port=6333)
+qdrant = QdrantClient(QDRANT_HOST, port=QDRANT_PORT)
 
 # -------- RULE CACHE + THREAD POOL --------
 RULE_CACHE = {}
@@ -44,13 +38,12 @@ def split_criteria(text: str) -> dict:
 
 def _llm_call(prompt):
     r = requests.post(
-        OLLAMA_GEN,
+        OLLAMA_GEN_URL,  # ← OLLAMA_GEN → OLLAMA_GEN_URL
         json={"model": LLM_MODEL, "prompt": prompt, "stream": False},
         timeout=120
     )
     r.raise_for_status()
     return extract_json(r.json()["response"])
-
 
 # ---------------- RULE COMPILER (CACHED) ----------------
 
@@ -109,12 +102,11 @@ Conditions: {", ".join(conditions)}
 Summary: {summary}
 """
     r = requests.post(
-        OLLAMA_EMB,
+        OLLAMA_EMB_URL,  # ← OLLAMA_EMB → OLLAMA_EMB_URL
         json={"model": EMB_MODEL, "prompt": text}
     )
     r.raise_for_status()
     return r.json()["embedding"]
-
 
 # ---------------- INDEX ONE TRIAL ----------------
 

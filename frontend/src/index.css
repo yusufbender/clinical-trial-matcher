@@ -1,0 +1,28 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy: #042C53;
+  --blue: #0C447C;
+  --mid: #185FA5;
+  --light: #378ADD;
+  --pale: #E6F1FB;
+  --pale2: #B5D4F4;
+  --surface: #f0f5fa;
+  --white: #ffffff;
+  --border: #d0dce8;
+  --text: #0a1f33;
+  --muted: #4a6580;
+  --green-bg: #EAF3DE;
+  --green-text: #27500A;
+  --red-bg: #FCEBEB;
+  --red-text: #791F1F;
+  --amber-bg: #FAEEDA;
+  --amber-text: #633806;
+}
+
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: var(--surface);
+  color: var(--text);
+  min-height: 100vh;
+}

@@ -1,9 +1,8 @@
 import os
 import xml.etree.ElementTree as ET
 from tqdm import tqdm
-
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from indexing.index_trials_with_rules import index_trial
-
 
 CANCER_KEYWORDS = ["cancer", "carcinoma", "tumor", "neoplasm", "oncology"]
 
@@ -50,20 +49,32 @@ def main():
             if f.endswith(".xml"):
                 xml_files.append(os.path.join(root, f))
 
-    for file in tqdm(xml_files):
-        parsed = parse_xml(file)
-        if not parsed:
-            continue
+    # 1) Hızlıca parse et, 10k onkoloji trial topla
+    parsed = []
+    for file in tqdm(xml_files, desc="Parsing XML"):
+        result = parse_xml(file)
+        if result:
+            parsed.append(result)
+        if len(parsed) >= 10000:
+            break
 
-        nct_id, title, summary, conditions, criteria = parsed
+    print(f"\nOncology trials found: {len(parsed)}")
 
-        index_trial(
-            trial_id=nct_id,
-            title=title or "",
-            summary=summary or "",
-            conditions=conditions,
-            criteria_text=criteria
-        )
+    # 2) Paralel index et
+    with ThreadPoolExecutor(max_workers=16) as ex:
+        futures = [
+            ex.submit(
+                index_trial,
+                trial_id=p[0],
+                title=p[1] or "",
+                summary=p[2] or "",
+                conditions=p[3],
+                criteria_text=p[4]
+            )
+            for p in parsed
+        ]
+        for _ in tqdm(as_completed(futures), total=len(futures), desc="Indexing"):
+            pass
 
 
 if __name__ == "__main__":
